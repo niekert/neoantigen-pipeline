@@ -54,7 +54,11 @@ python lookup_hla.py --alleles HLA-A*XX:XX,HLA-A*XX:XX,HLA-B*XX:XX,HLA-B*XX:XX,H
 
 4. **Immunogenicity assessment — exploratory heuristic only.** The agretopicity/DAI output is useful for rough ranking, but it is not a validated immunogenicity model and should not be read as proof that the peptides are clinically meaningful neoantigens. The current implementation reports both DEK-side and AFF2-side comparisons and ranks candidates using the lower available DAI as a conservative summary. For additional validation, submit candidates to [NetCTLpan 1.1](https://services.healthtech.dtu.dk/services/NetCTLpan-1.1/) (proteasomal cleavage + TAP transport) and [DeepImmuno](https://deepimmuno.research.cchmc.org/) (T-cell response prediction).
 
-5. **Hartwig LINX breakpoint coordinates** — still needed to definitively confirm the exon numbering interpretation (see Technical Notes).
+5. **Class II re-run with NetMHCIIpan 4.3 locally, including HLA-DQ and HLA-DP alleles** — the current Class II results used the IEDB REST API (NetMHCIIpan via web) against DRB1 only. A local run would cover DQ/DP and give higher accuracy.
+
+   > **BLOCKER:** NetMHCIIpan 4.3 requires a download from DTU (healthtech.dtu.dk) which is restricted to academic/whitelisted institutional email addresses. No `.edu` or whitelisted address available. Resolution: request access via NKI-AVL or LUMC collaborator, or ask oncologist to facilitate.
+
+6. **Hartwig LINX breakpoint coordinates** — still needed to definitively confirm the exon numbering interpretation (see Technical Notes).
 
 ## Output Files
 
