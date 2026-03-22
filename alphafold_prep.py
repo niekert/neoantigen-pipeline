@@ -24,9 +24,10 @@ import requests
 # ---------------------------------------------------------------------------
 
 PEPTIDE_CANDIDATES = [
-    {"peptide": "EAVEKAKPR",   "hla": "HLA-A*68:01", "ic50": 30.6,  "dai": 936},
-    {"peptide": "SEEEAVEKA",   "hla": "HLA-B*40:02", "ic50": 65.3,  "dai": 345},
-    {"peptide": "KESEEEAV",    "hla": "HLA-B*40:02", "ic50": 95.7,  "dai": 314},
+    {"peptide": "EAVEKAKPR",    "hla": "HLA-A*68:01", "ic50": 30.6,  "dai": 14.1},
+    {"peptide": "SEEEAVEKA",    "hla": "HLA-B*40:02", "ic50": 65.3,  "dai": 1.4},
+    {"peptide": "KESEEEAV",     "hla": "HLA-B*40:02", "ic50": 95.7,  "dai": 103.4},
+    {"peptide": "ESEEEAVEKAK",  "hla": "HLA-A*68:01", "ic50": 176.7, "dai": 54.5},
 ]
 
 # ---------------------------------------------------------------------------

@@ -85,7 +85,20 @@ Current exploratory outputs are in `neoantigen_output/`:
 - **Transcripts used:** DEK `ENST00000652689` (canonical, 375 aa, RefSeq NM_003472.4), AFF2 `ENST00000370460` (canonical, 1311 aa)
 - **Binding predictions:** MHCflurry 2.1.5 was used for Class I affinity prediction across the 34 generated Class I junction peptides and 54 HLA-I alleles.
 - **Immunogenicity:** Agretopicity (DAI) was computed as an exploratory differential-binding heuristic. The current implementation reports both DEK-side and AFF2-side values and ranks candidates using the lower available DAI as a conservative summary.
-- **AlphaFold 3 structure prediction:** EAVEKAKPR + HLA-A\*68:01 + B2M was modeled using AlphaFold Server. Overall ipTM = 0.96, ranking score = 0.97. The peptide-HLA chain-pair ipTM = 0.64 (moderate — peptide positioning is plausible but not high-confidence). The headline ipTM is dominated by the well-known HLA-B2M interface. Results and structure in `neoantigen_output/alphafold_outputs/`.
+- **AlphaFold 3 structure prediction:** Top candidates were modeled as peptide + HLA + B2M complexes using AlphaFold Server. The peptide-HLA chain-pair ipTM is the relevant confidence metric (overall ipTM is dominated by the well-known HLA-B2M interface). Results in `neoantigen_output/alphafold_outputs/`.
+
+## AlphaFold 3 Structure Predictions
+
+Peptide-HLA-B2M complexes modeled via [AlphaFold Server](https://alphafoldserver.com). Each model requires HLA typing confirmation before clinical interpretation — these are only meaningful if the patient carries the listed allele.
+
+| Peptide | HLA allele | IC50 | Cons. DAI | peptide-HLA ipTM | Structure | Notes |
+|---------|-----------|-----:|----------:|:----------------:|:---------:|-------|
+| EAVEKAKPR | A\*68:01 | 30.6 nM | 14.1x | 0.64 | [view](neoantigen_output/alphafold_outputs/EAVEKAKPR_HLA-A6801.png) | Flat in groove. Best binder overall. **Requires A\*68:01.** |
+| SEEEAVEKA | B\*40:02 | 65.3 nM | 1.4x | 0.86 | [view](neoantigen_output/alphafold_outputs/SEEEAVEKA_HLA-B4002.png) | Flat in groove. Best structural confidence. Low DAI. **Requires B\*40:02.** |
+| KESEEEAV | B\*40:02 | 95.7 nM | 103.4x | 0.64 | [view](neoantigen_output/alphafold_outputs/KESEEEAV_HLA-B4002.png) | Flat in groove. Best conservative DAI. **Requires B\*40:02.** |
+| ESEEEAVEKAK | A\*68:01 | 176.7 nM | 54.5x | 0.78 | [view](neoantigen_output/alphafold_outputs/ESEEEAVEKAK_HLA-A6801.png) | 11mer — bulging loop above groove. Weaker fit. **Requires A\*68:01.** |
+
+**ipTM guidance:** >0.8 = high confidence, 0.6–0.8 = moderate (plausible positioning), <0.6 = low confidence. The headline ipTM shown on the AlphaFold server (~0.96 for all models) is dominated by the HLA-B2M interface; the peptide-HLA value above is what matters for binding assessment.
 - **Not yet done:** definitive LINX breakpoint verification, RNA-level fusion confirmation, point mutation neoantigens (NF1 R2183Q, ATR D626N), NetCTLpan pathway validation, deeper immunogenicity modeling.
 
 ## How to Run

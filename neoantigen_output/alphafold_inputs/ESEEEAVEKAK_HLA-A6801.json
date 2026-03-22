@@ -1,0 +1,37 @@
+[
+  {
+    "name": "ESEEEAVEKAK_HLA-A6801",
+    "modelSeeds": [],
+    "sequences": [
+      {
+        "proteinChain": {
+          "sequence": "GSHSMRYFFTSVSRPGRGEPRFIAVGYVDDTQFVRFDSDAASQRMEPRAPWIEQEGPEYWDGETRKVKAHSQTHRVDLGTLRGYYNQSEAGSHTVQRMYGCDVGSDWRFLRGYHQYAYDGKDYIALKEDLRSWTAADMAAQTTKHKWEAAHVAEQLRAYLEGTCVEWLRRYLENGKETLQRTDAPKTHMTHHAVSDHEATLRCWALSFYPAEITLTWQRDGEDQTQDTELVETRPAGDGTFQKWAAVVVPSGQEQRYTCHVQHEGLPKPLTLRWEP",
+          "count": 1,
+          "glycans": [],
+          "modifications": [],
+          "useStructureTemplate": true
+        }
+      },
+      {
+        "proteinChain": {
+          "sequence": "IQRTPKIQVYSRHPAENGKSNFLNCYVSGFHPSDIEVDLLKNGERIEKVEHSDLSFSKDWSFYLLYYTEFTPTEKDEYACRVNHVTLSQPKIVKWDRDM",
+          "count": 1,
+          "glycans": [],
+          "modifications": [],
+          "useStructureTemplate": true
+        }
+      },
+      {
+        "proteinChain": {
+          "sequence": "ESEEEAVEKAK",
+          "count": 1,
+          "glycans": [],
+          "modifications": [],
+          "useStructureTemplate": false
+        }
+      }
+    ],
+    "dialect": "alphafoldserver",
+    "version": 1
+  }
+]

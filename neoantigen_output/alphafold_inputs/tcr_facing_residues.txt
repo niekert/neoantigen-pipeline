@@ -17,7 +17,7 @@ positions determine immunogenicity.
 Peptide:  EAVEKAKPR
 HLA:      HLA-A*68:01
 IC50:     30.6 nM
-DAI:      936x
+DAI:      14.1x
 ----------------------------------------
 Pos   AA   Role                   Note
 ------------------------------------------------------------
@@ -35,7 +35,7 @@ P9    R    HLA ANCHOR             buried in F pocket — C-terminal anchor
 Peptide:  SEEEAVEKA
 HLA:      HLA-B*40:02
 IC50:     65.3 nM
-DAI:      345x
+DAI:      1.4x
 ----------------------------------------
 Pos   AA   Role                   Note
 ------------------------------------------------------------
@@ -53,7 +53,7 @@ P9    A    HLA ANCHOR             buried in F pocket — C-terminal anchor
 Peptide:  KESEEEAV
 HLA:      HLA-B*40:02
 IC50:     95.7 nM
-DAI:      314x
+DAI:      103.4x
 ----------------------------------------
 Pos   AA   Role                   Note
 ------------------------------------------------------------
@@ -65,6 +65,26 @@ P5    E    TCR-FACING ★           central position — primary TCR contact
 P6    E    TCR-FACING             solvent-exposed, visible to T-cell receptor
 P7    A    partial anchor         secondary anchor for some alleles
 P8    V    HLA ANCHOR             buried in F pocket — C-terminal anchor
+
+============================================================
+Peptide:  ESEEEAVEKAK
+HLA:      HLA-A*68:01
+IC50:     176.7 nM
+DAI:      54.5x
+----------------------------------------
+Pos   AA   Role                   Note
+------------------------------------------------------------
+P1    E    partial exposure       N-terminal, partially visible
+P2    S    HLA ANCHOR             buried in B pocket — allele-specific
+P3    E    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P4    E    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P5    E    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P6    A    TCR-FACING ★           central position — primary TCR contact
+P7    V    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P8    E    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P9    K    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P10   A    partial anchor         secondary anchor for some alleles
+P11   K    HLA ANCHOR             buried in F pocket — C-terminal anchor
 
 ============================================================
 NEXT STEP
