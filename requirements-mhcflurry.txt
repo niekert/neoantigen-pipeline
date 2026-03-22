@@ -1,0 +1,3 @@
+mhcflurry
+pandas
+setuptools<81

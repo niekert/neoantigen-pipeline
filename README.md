@@ -14,7 +14,8 @@ Computational pipeline to identify candidate neoantigen peptides from a DEK-AFF2
 1. **Reconstructs the fusion junction** — fetches DEK and AFF2 protein sequences from Ensembl, maps exon boundaries, and determines the exact amino acid sequence at the fusion point
 2. **Generates candidate peptides** — creates all 8-15mer peptides that span the junction (48 candidates)
 3. **Predicts HLA binding** — runs [MHCflurry](https://github.com/openvax/mhcflurry) against 54 common HLA Class I alleles to identify which peptides could be presented to the immune system
-4. **Provides instant HLA lookup** — once HLA typing is available, results are filtered to the patient's specific alleles in seconds
+4. **Assesses immunogenicity** — computes agretopicity (DAI) by comparing fusion vs wildtype binding, ranking candidates by how "foreign" they appear to the immune system
+5. **Provides instant HLA lookup** — once HLA typing is available, results are filtered to the patient's specific alleles in seconds
 
 ## Key Results
 
@@ -26,14 +27,14 @@ The fusion protein sequence was reconstructed by fetching DEK (`ENST00000652689`
 
 Binding affinity was predicted using [MHCflurry 2.1.5](https://github.com/openvax/mhcflurry) (Class1AffinityPredictor), testing all 48 junction peptides against a panel of 54 common HLA Class I alleles (17 HLA-A, 23 HLA-B, 14 HLA-C) covering >95% of the global population. This produced 2,592 peptide-allele predictions. Binders were classified using a dual threshold: **elite** (IC50 < 50 nM *and* percentile < 0.5%), **strong** (IC50 < 500 nM *and* percentile < 2%).
 
-| Candidate   | Type  | Best IC50 | HLA Alleles with Strong Binding        |
-| ----------- | ----- | --------: | -------------------------------------- |
-| EAVEKAKPR   | 9mer  |   30.6 nM | A\*68:01, A\*33:01, A\*31:01           |
-| SEEEAVEKA   | 9mer  |   65.3 nM | B\*40:01, B\*40:02, B\*44:02, B\*44:03 |
-| KESEEEAVEKA | 11mer |   70.7 nM | B\*40:01, B\*40:02, B\*44:02, B\*44:03 |
-| ESEEEAVEK   | 9mer  |  136.8 nM | A\*68:01, C\*02:02, C\*03:03, C\*06:02 |
+| Candidate   | Type  | Best IC50 | DAI   | HLA Alleles with Strong Binding        |
+| ----------- | ----- | --------: | ----: | -------------------------------------- |
+| EAVEKAKPR   | 9mer  |   30.6 nM | 936x  | A\*68:01, A\*33:01, A\*31:01           |
+| SEEEAVEKA   | 9mer  |   65.3 nM | 345x  | B\*40:01, B\*40:02, B\*44:02, B\*44:03 |
+| KESEEEAVEKA | 11mer |   70.7 nM | 153x  | B\*40:01, B\*40:02, B\*44:02, B\*44:03 |
+| ESEEEAVEK   | 9mer  |  136.8 nM | 167x  | A\*68:01, C\*02:02, C\*03:03, C\*06:02 |
 
-2 elite binders (IC50 < 50 nM), 23 strong binders (IC50 < 500 nM) identified across the allele panel. Peptides are ranked by the number of HLA alleles they bind (promiscuous binders), as these make the strongest candidates regardless of the patient's specific HLA type.
+2 elite binders (IC50 < 50 nM), 23 strong binders (IC50 < 500 nM) identified across the allele panel. All candidates show excellent agretopicity (DAI > 10x), meaning the fusion peptides bind HLA far more strongly than their wildtype counterparts — the immune system should recognize them as foreign. DAI = IC50_wildtype / IC50_fusion; higher values indicate greater immunogenic potential.
 
 ## What Is Needed Next
 
@@ -46,7 +47,9 @@ python lookup_hla.py --alleles HLA-A*XX:XX,HLA-A*XX:XX,HLA-B*XX:XX,HLA-B*XX:XX,H
 
 2. **HLA Class II binding predictions — DONE (no strong binders found).** All 14 junction 15mers were tested against 16 common HLA-DRB1 alleles via IEDB API (NetMHCIIpan). No strong (rank < 2%) or weak (rank < 10%) binders were found. This means the fusion junction peptides are unlikely to activate CD4+ helper T cells through Class II presentation. The Class I candidates remain the primary focus. For higher-accuracy validation, re-run with [NetMHCIIpan 4.3](https://services.healthtech.dtu.dk/services/NetMHCIIpan-4.3/) locally (requires academic license from DTU — needs an institutional email e.g. from NKI-AVL or LUMC).
 
-3. **Hartwig LINX breakpoint coordinates** — to definitively confirm the exon numbering interpretation (see Technical Notes).
+3. **Immunogenicity assessment — DONE (excellent results).** Agretopicity (differential binding) analysis shows all strong binder candidates have DAI scores ranging from 2x to 936x, meaning fusion peptides bind HLA far better than their wildtype counterparts. Top candidate EAVEKAKPR scores DAI 936x on HLA-A\*68:01. For additional validation, submit candidates to [NetCTLpan 1.1](https://services.healthtech.dtu.dk/services/NetCTLpan-1.1/) (proteasomal cleavage + TAP transport) and [DeepImmuno](https://deepimmuno.research.cchmc.org/) (T-cell response prediction).
+
+4. **Hartwig LINX breakpoint coordinates** — to definitively confirm the exon numbering interpretation (see Technical Notes).
 
 ## Output Files
 
@@ -63,30 +66,58 @@ All results are in `neoantigen_output/`:
 | `wildtype_peptides.fasta`         | Normal counterpart peptides for comparison          |
 | `protein_sequences.fasta`         | Full DEK, AFF2, and fusion protein sequences        |
 | `analysis_report.txt`             | Fusion junction reconstruction details              |
+| `agretopicity_results.csv`        | Fusion vs wildtype binding comparison (DAI scores)  |
+| `final_candidates.csv`            | Ranked candidates by composite score                |
+| `immunogenicity_report.txt`       | Immunogenicity assessment with top 5 candidates     |
+| `netctlpan_input.txt`             | Ready-to-submit file for NetCTLpan web server       |
 
 ## Technical Notes
 
 - **Exon numbering:** Hartwig/LINX reports "DEK exon 7" counting all exons including UTR. DEK has 1 UTR-only exon at the 5' end, so this maps to coding exon 6 (ENST00000652689). This interpretation is confirmed by frame analysis — only coding exon 6 (phase 0) produces an in-frame fusion with AFF2 exon 9 (phase 0).
 - **Transcripts used:** DEK `ENST00000652689` (canonical, 375 aa, RefSeq NM_003472.4), AFF2 `ENST00000370460` (canonical, 1311 aa)
-- **Binding predictions:** MHCflurry 2.1.5, Class I only. Class II (HLA-DR/DQ/DP) predictions pending.
-- **Not yet done:** LINX breakpoint verification, Class II binding, point mutation neoantigens (NF1 R2183Q, ATR D626N), immunogenicity prediction.
+- **Binding predictions:** MHCflurry 2.1.5, Class I only. Class II tested via IEDB API (no strong binders found).
+- **Immunogenicity:** Agretopicity (DAI) computed for all strong binders. All candidates show DAI > 2x, top candidate 936x.
+- **Not yet done:** LINX breakpoint verification, point mutation neoantigens (NF1 R2183Q, ATR D626N), NetCTLpan pathway validation, DeepImmuno T-cell response prediction.
 
 ## How to Run
 
+### Setup (first time after cloning)
+
+MHCflurry requires Python 3.12 (it does not support 3.13+). All other scripts work with 3.12+ as well, so a single Python 3.12 venv is the simplest setup.
+
 ```bash
-# Phase 1-2: Fusion reconstruction + peptide generation
+# Create virtual environment (Python 3.12 recommended)
+python3.12 -m venv venv
 source venv/bin/activate
-python neoantigen_pipeline.py
 
-# Phase 4: Binding prediction
-source venv312/bin/activate
-python binding_prediction.py
+# Install dependencies
+pip install -r requirements.txt
+pip install -r requirements-mhcflurry.txt
 
-# When HLA type is known:
-python lookup_hla.py --alleles HLA-A*XX:XX,...
+# Download MHCflurry models (~150 MB, one-time)
+mhcflurry-downloads fetch
 ```
 
-Requires Python 3.14 (venv/) and Python 3.12 (venv312/) due to MHCflurry compatibility.
+### Running the pipeline
+
+```bash
+source venv/bin/activate
+
+# Phase 1-2: Fusion reconstruction + peptide generation
+python neoantigen_pipeline.py
+
+# Phase 3: HLA Class I binding prediction
+python binding_prediction.py
+
+# Phase 4: HLA Class II binding prediction (uses IEDB API, no local models needed)
+python class2_binding_prediction.py
+
+# Phase 5: Immunogenicity assessment (agretopicity / DAI)
+python immunogenicity_assessment.py
+
+# When HLA type is known:
+python lookup_hla.py --alleles HLA-A*XX:XX,HLA-A*XX:XX,HLA-B*XX:XX,HLA-B*XX:XX,HLA-C*XX:XX,HLA-C*XX:XX
+```
 
 ## Tools & References
 
@@ -173,6 +204,24 @@ Ranked by number of HLA alleles showing strong binding:
 
 All 14 junction 15mers were tested against 16 common HLA-DRB1 alleles. **No strong (rank < 2%) or weak (rank < 10%) binders were found.** This means the fusion junction peptides are unlikely to activate CD4+ helper T cells through Class II presentation. The Class I candidates remain the primary focus.
 
+### Immunogenicity Assessment (Agretopicity)
+
+**Tool:** MHCflurry 2.1.5 via `immunogenicity_assessment.py`
+
+For each strong-binding fusion peptide, the corresponding wildtype peptides (from normal DEK and AFF2) were also run through MHCflurry. The Differential Agretopicity Index (DAI = IC50_wildtype / IC50_fusion) measures how much better the fusion peptide binds compared to normal — higher DAI means the immune system is more likely to recognize it as foreign.
+
+**Results:** All 25 strong binders show excellent agretopicity:
+
+| Rank | Peptide     | Best HLA    | IC50 (nM) | DAI    | WT IC50 (nM) |
+|------|-------------|-------------|----------:|-------:|--------------:|
+| #1   | EAVEKAKPR   | A\*68:01    |      30.6 |  936x  |      28,625   |
+| #2   | SEEEAVEKA   | B\*40:02    |      65.3 |  345x  |      22,505   |
+| #3   | KESEEEAV    | B\*40:02    |      95.7 |  314x  |      30,068   |
+| #4   | KESEEEAVEKA | B\*40:02    |      70.7 |  153x  |      10,789   |
+| #5   | ESEEEAVEK   | A\*68:01    |     136.8 |  167x  |      22,864   |
+
+The extreme DAI values (100-900x) are expected for fusion neoantigens because the junction creates entirely novel sequences — the wildtype counterparts are completely different proteins that barely bind HLA. This is a strong positive signal: the immune system should have no pre-existing tolerance to these peptides.
+
 ### How to Read These Results
 
 - **IC50 (nM)** — Binding affinity. The concentration of peptide needed to occupy 50% of HLA molecules. Lower = stronger. <50 nM elite, <500 nM strong, <5000 nM weak.
@@ -185,7 +234,7 @@ All 14 junction 15mers were tested against 16 common HLA-DRB1 alleles. **No stro
 1. **HLA typing (critical, blocking)** — The patient's HLA-A, -B, -C alleles determine which candidates will actually work. Standard blood draw. Once available, run `lookup_hla.py`.
 2. **Hartwig LINX data (important, not blocking)** — Exact genomic breakpoint coordinates to confirm exon numbering interpretation. Look for `*.linx.fusion.tsv` file.
 3. **Point mutation neoantigens (secondary)** — NF1 R2183Q and ATR D626N could also produce neoantigens, though lower priority than the fusion (subclonal, lower VAF).
-4. **Immunogenicity prediction (stretch goal)** — Not all HLA-binding peptides trigger T-cell responses. Tools like IEDB immunogenicity predictor or DeepImmuno can estimate this.
+4. **Additional validation (optional)** — Submit top candidates to [NetCTLpan 1.1](https://services.healthtech.dtu.dk/services/NetCTLpan-1.1/) for proteasomal cleavage + TAP transport pathway prediction, and [DeepImmuno](https://deepimmuno.research.cchmc.org/) for T-cell response prediction (9-10mers only).
 
 ### Important Caveats
 

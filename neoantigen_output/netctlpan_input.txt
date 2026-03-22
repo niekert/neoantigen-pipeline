@@ -1,0 +1,25 @@
+# Peptides for NetCTLpan 1.1 submission
+# Submit at: https://services.healthtech.dtu.dk/services/NetCTLpan-1.1/
+# Paste the sequences below into the input box
+# Select relevant HLA alleles
+
+>EAVEKAKPR_9mer
+EAVEKAKPR
+>SEEEAVEKA_9mer
+SEEEAVEKA
+>KESEEEAV_8mer
+KESEEEAV
+>KESEEEAVEKA_11mer
+KESEEEAVEKA
+>ESEEEAVEK_9mer
+ESEEEAVEK
+>ESEEEAVEKAK_11mer
+ESEEEAVEKAK
+>SEEEAVEKAK_10mer
+SEEEAVEKAK
+>KESEEEAVEK_10mer
+KESEEEAVEK
+>SSDDEDKESEEEAVE_15mer
+SSDDEDKESEEEAVE
+>SDDEDKESEEEAVEK_15mer
+SDDEDKESEEEAVEK
