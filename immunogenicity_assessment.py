@@ -2,10 +2,10 @@
 """
 DEK-AFF2 Fusion — Immunogenicity Assessment
 =============================================
-Adds immunogenicity filtering on top of HLA binding predictions:
+Adds exploratory differential-binding analysis on top of HLA binding predictions:
 
-1. Agretopicity (DAI): Compares fusion vs wildtype binding — higher means
-   the fusion peptide is more "foreign" to the immune system
+1. Agretopicity (DAI): Compares fusion vs wildtype binding as a heuristic
+   prioritization signal
 2. Combined ranking of all candidates
 
 Requires: pip install mhcflurry pandas (same venv312 as binding_prediction.py)
@@ -153,6 +153,57 @@ def compute_agretopicity(strong_binders_df, wt_results_df, wt_map):
     return pd.DataFrame(results)
 
 
+def summarize_agretopicity(agretopicity_df):
+    """
+    Collapse DEK/AFF2-side WT comparisons to one row per peptide-allele pair.
+
+    We keep both side-specific DAI values and use the lower available DAI as the
+    conservative ranking metric. This avoids overstating agretopicity by only
+    keeping whichever WT side happens to give the most favorable comparison.
+    """
+    if len(agretopicity_df) == 0:
+        return pd.DataFrame()
+
+    group_cols = [
+        "peptide",
+        "name",
+        "length",
+        "allele",
+        "fusion_ic50_nM",
+        "fusion_percentile",
+        "binding_class",
+        "junction_pos",
+    ]
+
+    rows = []
+    for keys, group in agretopicity_df.groupby(group_cols, dropna=False):
+        row = dict(zip(group_cols, keys))
+
+        dai_values = []
+        for side in ["DEK", "AFF2"]:
+            side_rows = group[group["wt_side"] == side]
+            if side_rows.empty:
+                row[f"wt_peptide_{side.lower()}"] = ""
+                row[f"wt_ic50_nM_{side.lower()}"] = None
+                row[f"dai_{side.lower()}"] = None
+                continue
+
+            side_row = side_rows.iloc[0]
+            row[f"wt_peptide_{side.lower()}"] = side_row["wt_peptide"]
+            row[f"wt_ic50_nM_{side.lower()}"] = side_row["wt_ic50_nM"]
+            row[f"dai_{side.lower()}"] = side_row["dai"]
+            dai_values.append(side_row["dai"])
+
+        row["dai_conservative"] = round(min(dai_values), 2) if dai_values else None
+        row["dai_optimistic"] = round(max(dai_values), 2) if dai_values else None
+        row["dai_available_sides"] = ",".join(
+            side for side in ["DEK", "AFF2"] if pd.notna(row.get(f"dai_{side.lower()}"))
+        )
+        rows.append(row)
+
+    return pd.DataFrame(rows)
+
+
 def generate_final_ranking(agretopicity_df, outdir):
     """Generate final candidate ranking and reports."""
 
@@ -161,24 +212,20 @@ def generate_final_ranking(agretopicity_df, outdir):
     agretopicity_df.to_csv(agret_path, index=False)
     print(f"  Agretopicity results: {agret_path} ({len(agretopicity_df)} rows)")
 
-    # For each peptide-allele pair, take the best (highest) DAI across WT sides
-    if len(agretopicity_df) > 0:
-        best_dai = agretopicity_df.loc[
-            agretopicity_df.groupby(["peptide", "allele"])["dai"].idxmax()
-        ].copy()
-    else:
-        best_dai = pd.DataFrame()
+    best_dai = summarize_agretopicity(agretopicity_df)
 
     # Create composite score: prioritize by DAI, then by binding strength
     if len(best_dai) > 0:
-        # Normalize DAI and IC50 to 0-1 scale for ranking
-        max_dai = best_dai["dai"].max()
+        # Normalize conservative DAI and IC50 to 0-1 scale for ranking
+        max_dai = best_dai["dai_conservative"].max()
         max_ic50 = best_dai["fusion_ic50_nM"].max()
 
-        best_dai["dai_normalized"] = best_dai["dai"] / max_dai if max_dai > 0 else 0
+        best_dai["dai_normalized"] = (
+            best_dai["dai_conservative"] / max_dai if max_dai > 0 else 0
+        )
         best_dai["binding_normalized"] = 1 - (best_dai["fusion_ic50_nM"] / max_ic50)
 
-        # Composite: 50% DAI + 50% binding strength
+        # Composite: 50% conservative DAI + 50% binding strength
         best_dai["composite_score"] = (
             0.5 * best_dai["dai_normalized"] +
             0.5 * best_dai["binding_normalized"]
@@ -199,54 +246,62 @@ def generate_final_ranking(agretopicity_df, outdir):
 
         f.write("WHAT THIS REPORT IS\n")
         f.write("-" * 40 + "\n")
-        f.write("This report goes beyond HLA binding to assess whether the\n")
-        f.write("fusion peptides are likely to be recognized as FOREIGN by\n")
-        f.write("the immune system. The key metric is agretopicity (DAI).\n\n")
+        f.write("This report extends the HLA binding output with an\n")
+        f.write("exploratory agretopicity (DAI) comparison against WT\n")
+        f.write("DEK- and AFF2-side peptides.\n\n")
 
         f.write("AGRETOPICITY (DAI) — WHAT IT MEANS\n")
         f.write("-" * 40 + "\n")
         f.write("DAI = IC50_wildtype / IC50_fusion\n\n")
-        f.write("- DAI > 1: Fusion peptide binds HLA BETTER than the normal\n")
-        f.write("  version. This is good — the immune system's T cells that\n")
-        f.write("  recognize the normal peptide were deleted (tolerance), so\n")
-        f.write("  a stronger-binding fusion peptide is more likely to be\n")
-        f.write("  recognized as foreign.\n")
-        f.write("- DAI > 5: Strong differential. Very promising.\n")
-        f.write("- DAI > 10: Excellent. The fusion peptide binds 10x better.\n")
-        f.write("- DAI < 1: The normal peptide actually binds better. This\n")
-        f.write("  means T cells might already be tolerant to it. Less ideal.\n\n")
-        f.write("For fusion neoantigens (vs point mutations), high DAI is\n")
-        f.write("expected because the junction sequence is completely novel —\n")
-        f.write("the wildtype counterpart is a different protein entirely.\n\n")
+        f.write("- DAI > 1: The fusion peptide binds HLA better than the\n")
+        f.write("  chosen wildtype comparator for this allele. That can be\n")
+        f.write("  useful for prioritization, but it does not prove\n")
+        f.write("  presentation or T-cell recognition.\n")
+        f.write("- DAI > 5: Larger differential vs the chosen comparator.\n")
+        f.write("- DAI > 10: Very large differential vs the chosen comparator.\n")
+        f.write("- DAI < 1: The chosen wildtype comparator binds similarly or\n")
+        f.write("  better, which makes the fusion peptide less distinctive by\n")
+        f.write("  this heuristic.\n\n")
+        f.write("For fusion neoantigens, high DAI can occur because the\n")
+        f.write("junction sequence differs substantially from each native side.\n")
+        f.write("That still does not model processing, abundance, or TCR\n")
+        f.write("recognition.\n\n")
+        f.write("This report shows BOTH DEK-side and AFF2-side WT comparisons.\n")
+        f.write("For ranking, it uses the LOWER available DAI as a conservative\n")
+        f.write("summary rather than keeping only the most favorable value.\n\n")
 
         if len(best_dai) > 0:
             f.write("RANKED CANDIDATES\n")
             f.write("-" * 40 + "\n")
-            f.write(f"{'Rank':<5} {'Peptide':<16} {'Allele':<15} {'IC50(nM)':<10} "
-                    f"{'DAI':<8} {'Score':<8} {'Class':<8}\n")
-            f.write("-" * 70 + "\n")
+            f.write(
+                f"{'Rank':<5} {'Peptide':<16} {'Allele':<15} {'IC50(nM)':<10} "
+                f"{'Cons.DAI':<10} {'Max DAI':<10} {'Score':<8} {'Class':<8}\n"
+            )
+            f.write("-" * 88 + "\n")
 
             for rank, (_, row) in enumerate(best_dai.iterrows(), 1):
                 dai_flag = ""
-                if row["dai"] >= 10:
+                if row["dai_conservative"] >= 10:
                     dai_flag = " ***"
-                elif row["dai"] >= 5:
+                elif row["dai_conservative"] >= 5:
                     dai_flag = " **"
-                elif row["dai"] >= 2:
+                elif row["dai_conservative"] >= 2:
                     dai_flag = " *"
 
-                f.write(f"{rank:<5} {row['peptide']:<16} {row['allele']:<15} "
-                        f"{row['fusion_ic50_nM']:<10.1f} {row['dai']:<8.1f}"
-                        f"{row['composite_score']:<8.4f} {row['binding_class']:<8}"
-                        f"{dai_flag}\n")
+                f.write(
+                    f"{rank:<5} {row['peptide']:<16} {row['allele']:<15} "
+                    f"{row['fusion_ic50_nM']:<10.1f} {row['dai_conservative']:<10.1f} "
+                    f"{row['dai_optimistic']:<10.1f} {row['composite_score']:<8.4f} "
+                    f"{row['binding_class']:<8}{dai_flag}\n"
+                )
 
-            f.write("\n  *** = DAI >= 10 (excellent)\n")
-            f.write("  **  = DAI >= 5 (strong)\n")
-            f.write("  *   = DAI >= 2 (moderate)\n")
+            f.write("\n  *** = conservative DAI >= 10 (high differential)\n")
+            f.write("  **  = conservative DAI >= 5 (moderate-high differential)\n")
+            f.write("  *   = conservative DAI >= 2 (modest differential)\n")
 
             # Highlight top 5 unique peptides
             top_peptides = best_dai.drop_duplicates(subset="peptide").head(5)
-            f.write(f"\n\nTOP 5 VACCINE CANDIDATES\n")
+            f.write(f"\n\nTOP 5 WORKING CANDIDATES\n")
             f.write("-" * 40 + "\n")
 
             for rank, (_, row) in enumerate(top_peptides.iterrows(), 1):
@@ -254,17 +309,30 @@ def generate_final_ranking(agretopicity_df, outdir):
                 f.write(f"      Best allele: {row['allele']}\n")
                 f.write(f"      Binding: {row['fusion_ic50_nM']:.1f} nM "
                         f"({row['binding_class']})\n")
-                f.write(f"      Agretopicity (DAI): {row['dai']:.1f}")
-                if row["dai"] >= 10:
-                    f.write(" — EXCELLENT (fusion binds >10x better than WT)\n")
-                elif row["dai"] >= 5:
-                    f.write(" — STRONG (fusion binds >5x better than WT)\n")
-                elif row["dai"] >= 2:
-                    f.write(" — MODERATE\n")
+                f.write(
+                    f"      Conservative DAI: {row['dai_conservative']:.1f} "
+                    f"(max observed DAI: {row['dai_optimistic']:.1f})"
+                )
+                if row["dai_conservative"] >= 10:
+                    f.write(" — HIGH DIFFERENTIAL\n")
+                elif row["dai_conservative"] >= 5:
+                    f.write(" — MODERATE-HIGH DIFFERENTIAL\n")
+                elif row["dai_conservative"] >= 2:
+                    f.write(" — MODEST DIFFERENTIAL\n")
                 else:
-                    f.write(" — LOW (WT binds similarly)\n")
-                f.write(f"      WT peptide ({row['wt_side']}): {row['wt_peptide']}\n")
-                f.write(f"      WT IC50: {row['wt_ic50_nM']:.1f} nM\n")
+                    f.write(" — LOW DIFFERENTIAL / SELF-LIKE ON AT LEAST ONE SIDE\n")
+                if pd.notna(row.get("dai_dek")):
+                    f.write(
+                        f"      DEK-side WT: {row['wt_peptide_dek']} | "
+                        f"WT IC50: {row['wt_ic50_nM_dek']:.1f} nM | "
+                        f"DAI: {row['dai_dek']:.1f}\n"
+                    )
+                if pd.notna(row.get("dai_aff2")):
+                    f.write(
+                        f"      AFF2-side WT: {row['wt_peptide_aff2']} | "
+                        f"WT IC50: {row['wt_ic50_nM_aff2']:.1f} nM | "
+                        f"DAI: {row['dai_aff2']:.1f}\n"
+                    )
                 f.write(f"      Composite score: {row['composite_score']:.4f}\n")
 
         f.write(f"\n\nADDITIONAL VALIDATION (MANUAL)\n")
@@ -379,11 +447,13 @@ def main():
         top5 = final.drop_duplicates(subset="peptide").head(5)
         print(f"\n  Top candidates (by composite score):")
         for rank, (_, row) in enumerate(top5.iterrows(), 1):
-            dai_label = "EXCELLENT" if row["dai"] >= 10 else \
-                        "STRONG" if row["dai"] >= 5 else \
-                        "MODERATE" if row["dai"] >= 2 else "LOW"
-            print(f"    #{rank} {row['peptide']:16s} IC50: {row['fusion_ic50_nM']:7.1f} nM  "
-                  f"DAI: {row['dai']:6.1f} ({dai_label})  on {row['allele']}")
+            dai_label = "HIGH_DIFF" if row["dai_conservative"] >= 10 else \
+                       "MID_DIFF" if row["dai_conservative"] >= 5 else \
+                       "MODEST" if row["dai_conservative"] >= 2 else "LOW"
+            print(
+                f"    #{rank} {row['peptide']:16s} IC50: {row['fusion_ic50_nM']:7.1f} nM  "
+                f"cons.DAI: {row['dai_conservative']:6.1f} ({dai_label})  on {row['allele']}"
+            )
 
     print(f"\n  Output in: {outdir.resolve()}")
     print(f"  For additional validation, see netctlpan_input.txt")

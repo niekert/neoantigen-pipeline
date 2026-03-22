@@ -439,7 +439,8 @@ def write_fasta(peptides, output_file):
                 header = (
                     f">{cls}_{p['length']}mer_{i+1} "
                     f"junction_pos={p['junction_position_in_peptide']} "
-                    f"DEK={p['dek_residues']}aa_AFF2={p['aff2_residues']}aa"
+                    f"DEK={p['dek_residues']}aa "
+                    f"AFF2={p['aff2_residues']}aa"
                 )
                 f.write(f"{header}\n{p['sequence']}\n")
     print(f"\nFASTA written to: {output_file}")

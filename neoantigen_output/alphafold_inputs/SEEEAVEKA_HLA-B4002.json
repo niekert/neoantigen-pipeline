@@ -1,0 +1,37 @@
+[
+  {
+    "name": "SEEEAVEKA_HLA-B4002",
+    "modelSeeds": [],
+    "sequences": [
+      {
+        "proteinChain": {
+          "sequence": "GSHSMRYFYTSVSRPGRGEPRFISVGYVDDTQFVRFDSDAASPREEPRAPWIEQEGPEYWDRNTRNVKAQSQTDRVDLGTLRGYYNQSEDGSHTIQIMYGCDVGPDGRFLRGYRQDAYDGKDYIALNEDLRSWTAADTAAQITQRKWEAARVAEQLRAYLEGTCVEWLRRYLENGKETLQRTDPPKTHMTHHPISDHEATLRCWALGFYPAEITLTWQRDGEDQTQDTELVETRPAGDRTFQKWAAVVVPSGEEQRYTCHVQHEGLPKPLTLRWEP",
+          "count": 1,
+          "glycans": [],
+          "modifications": [],
+          "useStructureTemplate": true
+        }
+      },
+      {
+        "proteinChain": {
+          "sequence": "IQRTPKIQVYSRHPAENGKSNFLNCYVSGFHPSDIEVDLLKNGERIEKVEHSDLSFSKDWSFYLLYYTEFTPTEKDEYACRVNHVTLSQPKIVKWDRDM",
+          "count": 1,
+          "glycans": [],
+          "modifications": [],
+          "useStructureTemplate": true
+        }
+      },
+      {
+        "proteinChain": {
+          "sequence": "SEEEAVEKA",
+          "count": 1,
+          "glycans": [],
+          "modifications": [],
+          "useStructureTemplate": false
+        }
+      }
+    ],
+    "dialect": "alphafoldserver",
+    "version": 1
+  }
+]

@@ -17,6 +17,7 @@ Usage: python class2_binding_prediction.py [--input-dir ./neoantigen_output]
 import argparse
 import sys
 import time
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -73,26 +74,26 @@ def parse_class2_peptides(fasta_path):
     entries = parse_fasta(fasta_path)
     peptides = []
     for header, seq in entries:
-        if not header.startswith("class_II"):
-            continue
         parts = header.split()
-        meta = {}
-        for p in parts[1:]:
-            if "=" in p:
-                k, v = p.split("=", 1)
-                meta[k] = v
+        name = parts[0]
+        if not name.startswith("class_II_"):
+            continue
+
+        junction_match = re.search(r"junction_pos=(\d+)", header)
+        residue_match = re.search(r"DEK=(\d+)aa(?:_|\s+)AFF2=(\d+)aa", header)
+
         peptides.append({
-            "name": parts[0],
+            "name": name,
             "sequence": seq,
             "length": len(seq),
-            "junction_pos": int(meta.get("junction_pos", 0)),
-            "dek_residues": meta.get("DEK", "").replace("aa", ""),
-            "aff2_residues": meta.get("AFF2", "").replace("aa", ""),
+            "junction_pos": int(junction_match.group(1)) if junction_match else 0,
+            "dek_residues": residue_match.group(1) if residue_match else "",
+            "aff2_residues": residue_match.group(2) if residue_match else "",
         })
     return peptides
 
 
-def predict_iedb(peptide_seq, allele, method="netmhciipan_ba", retries=3):
+def predict_iedb(peptide_seq, allele, method="netmhciipan_ba", retries=5):
     """Run a single prediction via IEDB API. Returns parsed result or None."""
     for attempt in range(retries):
         try:
@@ -108,6 +109,11 @@ def predict_iedb(peptide_seq, allele, method="netmhciipan_ba", retries=3):
             )
             if resp.status_code == 200 and not resp.text.startswith("Error"):
                 return resp.text
+            elif resp.status_code == 403:
+                wait_s = 5 * (attempt + 1)
+                print(f"    API rate limit / 403 for {allele}; retrying in {wait_s}s")
+                if attempt < retries - 1:
+                    time.sleep(wait_s)
             else:
                 print(f"    API error for {allele}: {resp.text[:100]}")
                 if attempt < retries - 1:
@@ -167,11 +173,12 @@ def run_predictions(peptides, alleles):
                 except (ValueError, KeyError):
                     continue
 
-            # Brief pause to be polite to the API
+            # Brief pause to be polite to the API and reduce 403 bursts
+            time.sleep(0.2)
             if done % 5 == 0:
                 sys.stdout.write(f"\r  Progress: {done}/{total} predictions...")
                 sys.stdout.flush()
-                time.sleep(0.5)
+                time.sleep(0.8)
 
     print(f"\r  Completed {done}/{total} predictions.          ")
     return pd.DataFrame(results)

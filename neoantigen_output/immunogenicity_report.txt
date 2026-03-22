@@ -3,105 +3,108 @@ DEK-AFF2 Fusion — Immunogenicity Assessment Report
 
 WHAT THIS REPORT IS
 ----------------------------------------
-This report goes beyond HLA binding to assess whether the
-fusion peptides are likely to be recognized as FOREIGN by
-the immune system. The key metric is agretopicity (DAI).
+This report extends the HLA binding output with an
+exploratory agretopicity (DAI) comparison against WT
+DEK- and AFF2-side peptides.
 
 AGRETOPICITY (DAI) — WHAT IT MEANS
 ----------------------------------------
 DAI = IC50_wildtype / IC50_fusion
 
-- DAI > 1: Fusion peptide binds HLA BETTER than the normal
-  version. This is good — the immune system's T cells that
-  recognize the normal peptide were deleted (tolerance), so
-  a stronger-binding fusion peptide is more likely to be
-  recognized as foreign.
-- DAI > 5: Strong differential. Very promising.
-- DAI > 10: Excellent. The fusion peptide binds 10x better.
-- DAI < 1: The normal peptide actually binds better. This
-  means T cells might already be tolerant to it. Less ideal.
+- DAI > 1: The fusion peptide binds HLA better than the
+  chosen wildtype comparator for this allele. That can be
+  useful for prioritization, but it does not prove
+  presentation or T-cell recognition.
+- DAI > 5: Larger differential vs the chosen comparator.
+- DAI > 10: Very large differential vs the chosen comparator.
+- DAI < 1: The chosen wildtype comparator binds similarly or
+  better, which makes the fusion peptide less distinctive by
+  this heuristic.
 
-For fusion neoantigens (vs point mutations), high DAI is
-expected because the junction sequence is completely novel —
-the wildtype counterpart is a different protein entirely.
+For fusion neoantigens, high DAI can occur because the
+junction sequence differs substantially from each native side.
+That still does not model processing, abundance, or TCR
+recognition.
+
+This report shows BOTH DEK-side and AFF2-side WT comparisons.
+For ranking, it uses the LOWER available DAI as a conservative
+summary rather than keeping only the most favorable value.
 
 RANKED CANDIDATES
 ----------------------------------------
-Rank  Peptide          Allele          IC50(nM)   DAI      Score    Class   
-----------------------------------------------------------------------
-1     EAVEKAKPR        HLA-A*68:01     30.6       936.1   0.9654   ELITE    ***
-2     EAVEKAKPR        HLA-A*33:01     43.5       698.4   0.8239   ELITE    ***
-3     SEEEAVEKA        HLA-B*40:02     65.3       344.8   0.6104   STRONG   ***
-4     KESEEEAV         HLA-B*40:02     95.7       314.2   0.5597   STRONG   ***
-5     KESEEEAVEKA      HLA-B*40:02     70.7       152.7   0.5017   STRONG   ***
-6     SEEEAVEKA        HLA-B*40:01     139.1      213.1   0.4566   STRONG   ***
-7     ESEEEAVEK        HLA-A*68:01     136.8      167.2   0.4347   STRONG   ***
-8     ESEEEAVEKAK      HLA-A*68:01     176.7      147.6   0.3791   STRONG   ***
-9     ESEEEAVEK        HLA-C*03:03     147.9      36.0    0.3521   STRONG   ***
-10    KESEEEAVEKA      HLA-B*40:01     205.7      110.8   0.3267   STRONG   ***
-11    ESEEEAVEK        HLA-C*02:02     203.4      31.9    0.2872   STRONG   ***
-12    SEEEAVEKA        HLA-B*44:02     261.3      114.9   0.2661   STRONG   ***
-13    KESEEEAVEKA      HLA-B*44:02     258.9      92.7    0.2569   STRONG   ***
-14    SEEEAVEKAK       HLA-C*03:03     257.0      55.1    0.2390   STRONG   ***
-15    KESEEEAVEK       HLA-C*03:03     253.1      45.7    0.2383   STRONG   ***
-16    ESEEEAVEKAK      HLA-C*03:03     293.6      56.1    0.1981   STRONG   ***
-17    EAVEKAKPR        HLA-A*31:01     350.4      84.6    0.1492   STRONG   ***
-18    SEEEAVEKAK       HLA-B*44:02     386.8      74.8    0.1028   STRONG   ***
-19    KESEEEAVEK       HLA-B*27:05     357.7      10.0    0.1010   STRONG   ***
-20    ESEEEAVEK        HLA-C*06:02     384.1      37.9    0.0861   STRONG   ***
-21    KESEEEAVEKA      HLA-B*44:03     400.9      59.0    0.0784   STRONG   ***
-22    SSDDEDKESEEEAVE  HLA-B*27:05     396.9      5.5     0.0544   STRONG   **
-23    SEEEAVEKA        HLA-B*44:03     442.4      67.9    0.0363   STRONG   ***
-24    SDDEDKESEEEAVEK  HLA-B*27:05     417.8      2.0     0.0288   STRONG   *
-25    KESEEEAVEK       HLA-B*40:02     440.1      45.3    0.0267   STRONG   ***
+Rank  Peptide          Allele          IC50(nM)   Cons.DAI   Max DAI    Score    Class   
+----------------------------------------------------------------------------------------
+1     KESEEEAV         HLA-B*40:02     95.7       103.4      314.2      0.8919   STRONG   ***
+2     ESEEEAVEKAK      HLA-A*68:01     176.7      54.5       147.6      0.5639   STRONG   ***
+3     EAVEKAKPR        HLA-A*68:01     30.6       14.1       936.1      0.5337   ELITE    ***
+4     EAVEKAKPR        HLA-A*33:01     43.5       9.3        698.4      0.4959   ELITE    **
+5     KESEEEAVEKA      HLA-B*40:02     70.7       3.6        152.7      0.4376   STRONG   *
+6     SEEEAVEKA        HLA-B*40:02     65.3       1.4        344.8      0.4332   STRONG  
+7     SEEEAVEKA        HLA-B*40:01     139.1      2.5        213.1      0.3551   STRONG   *
+8     ESEEEAVEK        HLA-A*68:01     136.8      1.5        167.2      0.3527   STRONG  
+9     ESEEEAVEK        HLA-C*03:03     147.9      1.6        36.0       0.3407   STRONG  
+10    KESEEEAVEKA      HLA-B*40:01     205.7      12.0       110.8      0.3253   STRONG   ***
+11    ESEEEAVEK        HLA-C*02:02     203.4      2.7        31.9       0.2831   STRONG   *
+12    SEEEAVEKAK       HLA-C*03:03     257.0      9.9        55.1       0.2573   STRONG   **
+13    KESEEEAVEK       HLA-C*03:03     253.1      3.5        45.7       0.2311   STRONG   *
+14    KESEEEAVEKA      HLA-B*44:02     258.9      2.3        92.7       0.2184   STRONG   *
+15    SEEEAVEKA        HLA-B*44:02     261.3      1.2        114.9      0.2106   STRONG  
+16    ESEEEAVEKAK      HLA-C*03:03     293.6      2.6        56.1       0.1806   STRONG   *
+17    EAVEKAKPR        HLA-A*31:01     350.4      13.4       84.6       0.1690   STRONG   ***
+18    KESEEEAVEK       HLA-B*27:05     357.7      0.9        10.0       0.1002   STRONG  
+19    ESEEEAVEK        HLA-C*06:02     384.1      2.1        37.9       0.0759   STRONG   *
+20    SEEEAVEKAK       HLA-B*44:02     386.8      0.7        74.8       0.0661   STRONG  
+21    KESEEEAVEKA      HLA-B*44:03     400.9      2.9        59.0       0.0609   STRONG   *
+22    KESEEEAVEK       HLA-B*40:02     440.1      2.3        45.3       0.0135   STRONG   *
+23    SEEEAVEKA        HLA-B*44:03     442.4      1.3        67.9       0.0063   STRONG  
 
-  *** = DAI >= 10 (excellent)
-  **  = DAI >= 5 (strong)
-  *   = DAI >= 2 (moderate)
+  *** = conservative DAI >= 10 (high differential)
+  **  = conservative DAI >= 5 (moderate-high differential)
+  *   = conservative DAI >= 2 (modest differential)
 
 
-TOP 5 VACCINE CANDIDATES
+TOP 5 WORKING CANDIDATES
 ----------------------------------------
 
-  #1: EAVEKAKPR (9mer)
-      Best allele: HLA-A*68:01
-      Binding: 30.6 nM (ELITE)
-      Agretopicity (DAI): 936.1 — EXCELLENT (fusion binds >10x better than WT)
-      WT peptide (AFF2): GSGSSSESE
-      WT IC50: 28625.0 nM
-      Composite score: 0.9654
-
-  #2: SEEEAVEKA (9mer)
-      Best allele: HLA-B*40:02
-      Binding: 65.3 nM (STRONG)
-      Agretopicity (DAI): 344.8 — EXCELLENT (fusion binds >10x better than WT)
-      WT peptide (AFF2): ASGGSGSSS
-      WT IC50: 22504.5 nM
-      Composite score: 0.6104
-
-  #3: KESEEEAV (8mer)
+  #1: KESEEEAV (8mer)
       Best allele: HLA-B*40:02
       Binding: 95.7 nM (STRONG)
-      Agretopicity (DAI): 314.2 — EXCELLENT (fusion binds >10x better than WT)
-      WT peptide (AFF2): VQASGGSG
-      WT IC50: 30067.9 nM
-      Composite score: 0.5597
+      Conservative DAI: 103.4 (max observed DAI: 314.2) — HIGH DIFFERENTIAL
+      DEK-side WT: KESEEEPP | WT IC50: 9894.7 nM | DAI: 103.4
+      AFF2-side WT: VQASGGSG | WT IC50: 30067.9 nM | DAI: 314.2
+      Composite score: 0.8919
+
+  #2: ESEEEAVEKAK (11mer)
+      Best allele: HLA-A*68:01
+      Binding: 176.7 nM (STRONG)
+      Conservative DAI: 54.5 (max observed DAI: 147.6) — HIGH DIFFERENTIAL
+      DEK-side WT: ESEEEPPKKTA | WT IC50: 26091.2 nM | DAI: 147.6
+      AFF2-side WT: QASGGSGSSSE | WT IC50: 9634.7 nM | DAI: 54.5
+      Composite score: 0.5639
+
+  #3: EAVEKAKPR (9mer)
+      Best allele: HLA-A*68:01
+      Binding: 30.6 nM (ELITE)
+      Conservative DAI: 14.1 (max observed DAI: 936.1) — HIGH DIFFERENTIAL
+      DEK-side WT: EPPKKTAKR | WT IC50: 431.5 nM | DAI: 14.1
+      AFF2-side WT: GSGSSSESE | WT IC50: 28625.0 nM | DAI: 936.1
+      Composite score: 0.5337
 
   #4: KESEEEAVEKA (11mer)
       Best allele: HLA-B*40:02
       Binding: 70.7 nM (STRONG)
-      Agretopicity (DAI): 152.7 — EXCELLENT (fusion binds >10x better than WT)
-      WT peptide (AFF2): VQASGGSGSSS
-      WT IC50: 10789.0 nM
-      Composite score: 0.5017
+      Conservative DAI: 3.6 (max observed DAI: 152.7) — MODEST DIFFERENTIAL
+      DEK-side WT: KESEEEPPKKT | WT IC50: 254.7 nM | DAI: 3.6
+      AFF2-side WT: VQASGGSGSSS | WT IC50: 10789.0 nM | DAI: 152.7
+      Composite score: 0.4376
 
-  #5: ESEEEAVEK (9mer)
-      Best allele: HLA-A*68:01
-      Binding: 136.8 nM (STRONG)
-      Agretopicity (DAI): 167.2 — EXCELLENT (fusion binds >10x better than WT)
-      WT peptide (AFF2): QASGGSGSS
-      WT IC50: 22863.8 nM
-      Composite score: 0.4347
+  #5: SEEEAVEKA (9mer)
+      Best allele: HLA-B*40:02
+      Binding: 65.3 nM (STRONG)
+      Conservative DAI: 1.4 (max observed DAI: 344.8) — LOW DIFFERENTIAL / SELF-LIKE ON AT LEAST ONE SIDE
+      DEK-side WT: SEEEPPKKT | WT IC50: 94.7 nM | DAI: 1.4
+      AFF2-side WT: ASGGSGSSS | WT IC50: 22504.5 nM | DAI: 344.8
+      Composite score: 0.4332
 
 
 ADDITIONAL VALIDATION (MANUAL)

@@ -26,7 +26,7 @@ SUMMARY
 ----------------------------------------
 Peptides tested:    14 (15mers)
 HLA-DRB1 alleles:   16
-Total predictions:  223
+Total predictions:  224
 Strong binders:     0 (rank < 2%)
 Weak binders:       0 (rank < 10%)
 

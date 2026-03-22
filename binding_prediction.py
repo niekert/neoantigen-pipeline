@@ -15,6 +15,7 @@ import argparse
 import sys
 import os
 import warnings
+import re
 from pathlib import Path
 
 # Suppress TensorFlow noise
@@ -75,23 +76,23 @@ def parse_junction_peptides(fasta_path):
     entries = parse_fasta(fasta_path)
     peptides = []
     for header, seq in entries:
-        if not header.startswith("class_I"):
-            continue
-        # Parse header: class_I_8mer_1 junction_pos=7 DEK=7aa_AFF2=1aa
         parts = header.split()
         name = parts[0]
-        meta = {}
-        for p in parts[1:]:
-            if "=" in p:
-                k, v = p.split("=", 1)
-                meta[k] = v
+        if not name.startswith("class_I_"):
+            continue
+
+        # Parse both the current DEK=7aa_AFF2=1aa format and a future
+        # DEK=7aa AFF2=1aa format if the FASTA is regenerated.
+        junction_match = re.search(r"junction_pos=(\d+)", header)
+        residue_match = re.search(r"DEK=(\d+)aa(?:_|\s+)AFF2=(\d+)aa", header)
+
         peptides.append({
             "name": name,
             "sequence": seq,
             "length": len(seq),
-            "junction_pos": int(meta.get("junction_pos", 0)),
-            "dek_residues": meta.get("DEK", "").replace("aa", ""),
-            "aff2_residues": meta.get("AFF2", "").replace("aa", ""),
+            "junction_pos": int(junction_match.group(1)) if junction_match else 0,
+            "dek_residues": residue_match.group(1) if residue_match else "",
+            "aff2_residues": residue_match.group(2) if residue_match else "",
         })
     return peptides
 

@@ -15,12 +15,12 @@ HOW TO READ THE RESULTS
 
 SUMMARY
 ----------------------------------------
-Peptides tested:    48
+Peptides tested:    34
 HLA alleles tested: 54
-Total predictions:  2592
+Total predictions:  1836
 Elite binders:      2 (IC50 < 50 nM, percentile < 0.5%)
-Strong binders:     23 (IC50 < 500 nM, percentile < 2%)
-Weak binders:       138 (IC50 < 5000 nM, percentile < 5%)
+Strong binders:     21 (IC50 < 500 nM, percentile < 2%)
+Weak binders:       125 (IC50 < 5000 nM, percentile < 5%)
 
 TOP CANDIDATES (by number of HLA alleles bound)
 ----------------------------------------
@@ -72,18 +72,6 @@ TOP CANDIDATES (by number of HLA alleles bound)
   Binds 1 alleles (0 elite)
   Best IC50: 95.7 nM (percentile: 0.745%)
   Alleles: HLA-B*40:02
-
-  Peptide: SDDEDKESEEEAVEK (15mer)
-  Junction position: 11 (DEK|AFF2 split at position 11)
-  Binds 1 alleles (0 elite)
-  Best IC50: 417.8 nM (percentile: 1.785%)
-  Alleles: HLA-B*27:05
-
-  Peptide: SSDDEDKESEEEAVE (15mer)
-  Junction position: 12 (DEK|AFF2 split at position 12)
-  Binds 1 alleles (0 elite)
-  Best IC50: 396.9 nM (percentile: 1.696%)
-  Alleles: HLA-B*27:05
 
 
 NOTE ON CLASS II PEPTIDES

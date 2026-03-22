@@ -1,0 +1,82 @@
+DEK-AFF2 Fusion — TCR-Facing Residue Analysis
+============================================================
+
+WHAT THIS MEANS
+----------------------------------------
+HLA class I molecules bind peptides in a groove. The peptide
+is held by anchor residues buried at each end. The middle
+residues stick up like a ridge — that's what the T-cell
+receptor (TCR) scans for. If those residues look foreign,
+the T cell fires.
+
+Anchor positions are allele-specific (different HLA alleles
+prefer different amino acids at P2 and P9). TCR-facing
+positions determine immunogenicity.
+
+============================================================
+Peptide:  EAVEKAKPR
+HLA:      HLA-A*68:01
+IC50:     30.6 nM
+DAI:      936x
+----------------------------------------
+Pos   AA   Role                   Note
+------------------------------------------------------------
+P1    E    partial exposure       N-terminal, partially visible
+P2    A    HLA ANCHOR             buried in B pocket — allele-specific
+P3    V    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P4    E    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P5    K    TCR-FACING ★           central position — primary TCR contact
+P6    A    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P7    K    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P8    P    partial anchor         secondary anchor for some alleles
+P9    R    HLA ANCHOR             buried in F pocket — C-terminal anchor
+
+============================================================
+Peptide:  SEEEAVEKA
+HLA:      HLA-B*40:02
+IC50:     65.3 nM
+DAI:      345x
+----------------------------------------
+Pos   AA   Role                   Note
+------------------------------------------------------------
+P1    S    partial exposure       N-terminal, partially visible
+P2    E    HLA ANCHOR             buried in B pocket — allele-specific
+P3    E    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P4    E    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P5    A    TCR-FACING ★           central position — primary TCR contact
+P6    V    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P7    E    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P8    K    partial anchor         secondary anchor for some alleles
+P9    A    HLA ANCHOR             buried in F pocket — C-terminal anchor
+
+============================================================
+Peptide:  KESEEEAV
+HLA:      HLA-B*40:02
+IC50:     95.7 nM
+DAI:      314x
+----------------------------------------
+Pos   AA   Role                   Note
+------------------------------------------------------------
+P1    K    partial exposure       N-terminal, partially visible
+P2    E    HLA ANCHOR             buried in B pocket — allele-specific
+P3    S    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P4    E    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P5    E    TCR-FACING ★           central position — primary TCR contact
+P6    E    TCR-FACING             solvent-exposed, visible to T-cell receptor
+P7    A    partial anchor         secondary anchor for some alleles
+P8    V    HLA ANCHOR             buried in F pocket — C-terminal anchor
+
+============================================================
+NEXT STEP
+----------------------------------------
+1. Upload each JSON file to: https://alphafoldserver.com
+   (free, requires Google account)
+2. Download the resulting PDB file (~5-15 min per job)
+3. Visualize at: https://molstar.org/viewer
+   - Load PDB → color by chain
+   - Chain A = HLA alpha (blue), Chain B = B2M (green),
+     Chain C = peptide (red)
+   - Zoom into the peptide — confirm TCR-facing residues
+     are solvent-exposed (sticking up out of the groove)
+4. Optional: search rcsb.org for 'HLA-A*68:01' to find
+   existing crystal structures to compare against
