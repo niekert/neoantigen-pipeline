@@ -115,7 +115,8 @@ python lookup_hla.py --alleles HLA-A*XX:XX,HLA-A*XX:XX,HLA-B*XX:XX,HLA-B*XX:XX,H
 - `neoantigen_output/promiscuous_binders.csv` — peptides ranked by # alleles
 - `neoantigen_output/binding_report.txt` — human-readable summary
 
-**Note:** Class II peptides (15mers) not yet tested — MHCflurry only supports Class I. Use NetMHCIIpan 4.3 web server for Class II.
+**Class II binding predictions — DONE (no strong binders):**
+Tested all 14 junction 15mers against 16 common HLA-DRB1 alleles via IEDB API (NetMHCIIpan). No strong or weak binders found (best rank: 74%). The fusion junction peptides do not appear to bind Class II HLA molecules well. Tool: `class2_binding_prediction.py` (uses IEDB REST API). For validation, consider re-running with NetMHCIIpan 4.3 locally (requires academic license from DTU — needs institutional email e.g. NKI-AVL or LUMC).
 
 ---
 
@@ -142,6 +143,7 @@ Not all peptides that bind HLA trigger a T-cell response. Tools like IEDB immuno
 | `neoantigen_pipeline.py` | 3.14 (venv/) | Phase 1-2: fusion reconstruction + peptide generation |
 | `binding_prediction.py` | 3.12 (venv312/) | Phase 4: HLA binding prediction against all common alleles |
 | `lookup_hla.py` | 3.12 (venv312/) | Filter pre-computed results to specific HLA alleles |
+| `class2_binding_prediction.py` | 3.12 (venv312/) | Class II binding prediction via IEDB API |
 
 Two venvs because MHCflurry requires Python 3.12 (incompatible with 3.14).
 
@@ -151,7 +153,8 @@ Two venvs because MHCflurry requires Python 3.12 (incompatible with 3.14).
 
 - [ ] HLA type (pending clinical typing or Hartwig BAM access)
 - [ ] Hartwig LINX breakpoint coordinates (to confirm exon numbering interpretation)
-- [ ] Class II binding predictions (NetMHCIIpan 4.3)
+- [x] Class II binding predictions — done, no strong binders found
+- [ ] Re-validate Class II with NetMHCIIpan 4.3 locally (requires academic license)
 - [ ] Point mutation neoantigen analysis (NF1, ATR)
 - [ ] Immunogenicity prediction (stretch)
 - [ ] RNA-seq data (would confirm fusion expression — may not exist)

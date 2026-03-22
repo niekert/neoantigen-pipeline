@@ -40,7 +40,7 @@ source venv312/bin/activate
 python lookup_hla.py --alleles HLA-A*XX:XX,HLA-A*XX:XX,HLA-B*XX:XX,HLA-B*XX:XX,HLA-C*XX:XX,HLA-C*XX:XX
 ```
 
-2. **HLA Class II binding predictions** — 14 additional junction peptides (15mers) have been generated but not yet tested. Class II presentation (HLA-DR, -DQ, -DP) activates CD4+ helper T cells, which support and sustain the CD8+ killer T cell response. This is an important complementary analysis. Requires [NetMHCIIpan 4.3](https://services.healthtech.dtu.dk/services/NetMHCIIpan-4.3/) (web server or local install).
+2. **HLA Class II binding predictions — DONE (no strong binders found).** All 14 junction 15mers were tested against 16 common HLA-DRB1 alleles via IEDB API (NetMHCIIpan). No strong (rank < 2%) or weak (rank < 10%) binders were found. This means the fusion junction peptides are unlikely to activate CD4+ helper T cells through Class II presentation. The Class I candidates remain the primary focus. For higher-accuracy validation, re-run with [NetMHCIIpan 4.3](https://services.healthtech.dtu.dk/services/NetMHCIIpan-4.3/) locally (requires academic license from DTU — needs an institutional email e.g. from NKI-AVL or LUMC).
 
 3. **Hartwig LINX breakpoint coordinates** — to definitively confirm the exon numbering interpretation (see Technical Notes).
 

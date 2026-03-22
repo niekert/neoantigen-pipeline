@@ -1,0 +1,40 @@
+DEK-AFF2 Fusion — Class II HLA Binding Prediction Report
+============================================================
+
+PREDICTION METHOD
+----------------------------------------
+Tool: IEDB API (NetMHCIIpan binding affinity)
+Note: For higher accuracy, re-run with NetMHCIIpan 4.3 locally
+      once academic license access is obtained.
+
+WHY CLASS II MATTERS
+----------------------------------------
+Class II HLA molecules (HLA-DR, -DQ, -DP) present peptides to
+CD4+ helper T cells. These helper cells are critical for mounting
+and sustaining a strong CD8+ killer T cell response. A vaccine
+that activates both Class I (killer) and Class II (helper)
+responses is more likely to be effective.
+
+HOW TO READ THESE RESULTS
+----------------------------------------
+- IC50 (nM): Lower = stronger binding.
+- Rank (%): Percentile rank. Lower = better.
+  < 2% = strong binder, < 10% = weak binder (Class II thresholds)
+- Core peptide: The 9-residue binding core within the 15mer.
+
+SUMMARY
+----------------------------------------
+Peptides tested:    14 (15mers)
+HLA-DRB1 alleles:   16
+Total predictions:  223
+Strong binders:     0 (rank < 2%)
+Weak binders:       0 (rank < 10%)
+
+
+
+NEXT STEPS
+----------------------------------------
+1. Get HLA-DRB1 typing (included in standard HLA typing blood draw)
+2. Cross-reference your DRB1 alleles with the strong binders above
+3. Consider re-running with NetMHCIIpan 4.3 locally for higher accuracy
+   (requires academic license from DTU: https://services.healthtech.dtu.dk)
