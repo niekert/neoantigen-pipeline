@@ -2,7 +2,7 @@ DEK-AFF2 Fusion Neoantigen Discovery — Full Project Summary
 ============================================================
 Date: 2026-03-22
 Patient: Niek
-Sample: COREDB010694T2 (Hartwig Medical Foundation)
+Source: Hartwig Medical Foundation WGS
 Diagnosis: Stage IV NSCLC with neuroendocrine differentiation
 
 ============================================================

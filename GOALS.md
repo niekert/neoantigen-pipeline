@@ -2,7 +2,7 @@
 
 ## Background
 
-Stage IV NSCLC with neuroendocrine differentiation, driven by a **DEK-AFF2 gene fusion** (DEK exon 7 → AFF2 exon 9). Detected by whole genome sequencing (Hartwig Medical Foundation, sample COREDB010694T2).
+Stage IV NSCLC with neuroendocrine differentiation, driven by a **DEK-AFF2 gene fusion** (DEK exon 7 → AFF2 exon 9). Detected by whole genome sequencing (Hartwig Medical Foundation).
 
 The fusion creates a novel protein junction that doesn't exist in normal human biology — an ideal target for a personalized mRNA cancer vaccine. It's clonal, functionally essential, and the tumor can't easily lose it.
 
@@ -20,7 +20,7 @@ The goal is to computationally identify candidate neoantigen peptides from this 
 - **PD-L1:** <1%
 - **MSI:** Stable
 - **HLA type:** NOT YET KNOWN — pending clinical typing
-- **Hartwig sample ID:** COREDB010694T2
+- **Hartwig sample ID:** [redacted]
 - **Reference genome:** hg38 (GRCh38)
 
 ---

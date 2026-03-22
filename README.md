@@ -6,7 +6,7 @@ Computational pipeline to identify candidate neoantigen peptides from a DEK-AFF2
 
 - **Diagnosis:** Stage IV NSCLC with neuroendocrine differentiation
 - **Driver:** DEK-AFF2 gene fusion (DEK exon 7 → AFF2 exon 9, in-frame)
-- **Source:** Whole genome sequencing by Hartwig Medical Foundation (COREDB010694T2, hg38)
+- **Source:** Whole genome sequencing by Hartwig Medical Foundation (hg38)
 - **TMB:** 1.4 mut/Mb | **PD-L1:** <1% | **MSI:** Stable
 
 ## What This Pipeline Does
@@ -135,7 +135,7 @@ This is a computational research project, not a clinical recommendation. All fin
 
 ## Full Project Summary
 
-**Date:** 2026-03-22 | **Sample:** COREDB010694T2 (Hartwig Medical Foundation) | **Diagnosis:** Stage IV NSCLC with neuroendocrine differentiation
+**Date:** 2026-03-22 | **Source:** Hartwig Medical Foundation WGS | **Diagnosis:** Stage IV NSCLC with neuroendocrine differentiation
 
 ### Background
 
