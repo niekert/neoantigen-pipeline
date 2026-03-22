@@ -1,0 +1,96 @@
+>class_I_8mer_1 junction_pos=7 DEK=7aa_AFF2=1aa
+DKESEEEA
+>class_I_8mer_2 junction_pos=6 DEK=6aa_AFF2=2aa
+KESEEEAV
+>class_I_8mer_3 junction_pos=5 DEK=5aa_AFF2=3aa
+ESEEEAVE
+>class_I_8mer_4 junction_pos=4 DEK=4aa_AFF2=4aa
+SEEEAVEK
+>class_I_8mer_5 junction_pos=3 DEK=3aa_AFF2=5aa
+EEEAVEKA
+>class_I_8mer_6 junction_pos=2 DEK=2aa_AFF2=6aa
+EEAVEKAK
+>class_I_8mer_7 junction_pos=1 DEK=1aa_AFF2=7aa
+EAVEKAKP
+>class_I_9mer_8 junction_pos=8 DEK=8aa_AFF2=1aa
+EDKESEEEA
+>class_I_9mer_9 junction_pos=7 DEK=7aa_AFF2=2aa
+DKESEEEAV
+>class_I_9mer_10 junction_pos=6 DEK=6aa_AFF2=3aa
+KESEEEAVE
+>class_I_9mer_11 junction_pos=5 DEK=5aa_AFF2=4aa
+ESEEEAVEK
+>class_I_9mer_12 junction_pos=4 DEK=4aa_AFF2=5aa
+SEEEAVEKA
+>class_I_9mer_13 junction_pos=3 DEK=3aa_AFF2=6aa
+EEEAVEKAK
+>class_I_9mer_14 junction_pos=2 DEK=2aa_AFF2=7aa
+EEAVEKAKP
+>class_I_9mer_15 junction_pos=1 DEK=1aa_AFF2=8aa
+EAVEKAKPR
+>class_I_10mer_16 junction_pos=9 DEK=9aa_AFF2=1aa
+DEDKESEEEA
+>class_I_10mer_17 junction_pos=8 DEK=8aa_AFF2=2aa
+EDKESEEEAV
+>class_I_10mer_18 junction_pos=7 DEK=7aa_AFF2=3aa
+DKESEEEAVE
+>class_I_10mer_19 junction_pos=6 DEK=6aa_AFF2=4aa
+KESEEEAVEK
+>class_I_10mer_20 junction_pos=5 DEK=5aa_AFF2=5aa
+ESEEEAVEKA
+>class_I_10mer_21 junction_pos=4 DEK=4aa_AFF2=6aa
+SEEEAVEKAK
+>class_I_10mer_22 junction_pos=3 DEK=3aa_AFF2=7aa
+EEEAVEKAKP
+>class_I_10mer_23 junction_pos=2 DEK=2aa_AFF2=8aa
+EEAVEKAKPR
+>class_I_10mer_24 junction_pos=1 DEK=1aa_AFF2=9aa
+EAVEKAKPRN
+>class_I_11mer_25 junction_pos=10 DEK=10aa_AFF2=1aa
+DDEDKESEEEA
+>class_I_11mer_26 junction_pos=9 DEK=9aa_AFF2=2aa
+DEDKESEEEAV
+>class_I_11mer_27 junction_pos=8 DEK=8aa_AFF2=3aa
+EDKESEEEAVE
+>class_I_11mer_28 junction_pos=7 DEK=7aa_AFF2=4aa
+DKESEEEAVEK
+>class_I_11mer_29 junction_pos=6 DEK=6aa_AFF2=5aa
+KESEEEAVEKA
+>class_I_11mer_30 junction_pos=5 DEK=5aa_AFF2=6aa
+ESEEEAVEKAK
+>class_I_11mer_31 junction_pos=4 DEK=4aa_AFF2=7aa
+SEEEAVEKAKP
+>class_I_11mer_32 junction_pos=3 DEK=3aa_AFF2=8aa
+EEEAVEKAKPR
+>class_I_11mer_33 junction_pos=2 DEK=2aa_AFF2=9aa
+EEAVEKAKPRN
+>class_I_11mer_34 junction_pos=1 DEK=1aa_AFF2=10aa
+EAVEKAKPRNN
+>class_II_15mer_1 junction_pos=14 DEK=14aa_AFF2=1aa
+EESSDDEDKESEEEA
+>class_II_15mer_2 junction_pos=13 DEK=13aa_AFF2=2aa
+ESSDDEDKESEEEAV
+>class_II_15mer_3 junction_pos=12 DEK=12aa_AFF2=3aa
+SSDDEDKESEEEAVE
+>class_II_15mer_4 junction_pos=11 DEK=11aa_AFF2=4aa
+SDDEDKESEEEAVEK
+>class_II_15mer_5 junction_pos=10 DEK=10aa_AFF2=5aa
+DDEDKESEEEAVEKA
+>class_II_15mer_6 junction_pos=9 DEK=9aa_AFF2=6aa
+DEDKESEEEAVEKAK
+>class_II_15mer_7 junction_pos=8 DEK=8aa_AFF2=7aa
+EDKESEEEAVEKAKP
+>class_II_15mer_8 junction_pos=7 DEK=7aa_AFF2=8aa
+DKESEEEAVEKAKPR
+>class_II_15mer_9 junction_pos=6 DEK=6aa_AFF2=9aa
+KESEEEAVEKAKPRN
+>class_II_15mer_10 junction_pos=5 DEK=5aa_AFF2=10aa
+ESEEEAVEKAKPRNN
+>class_II_15mer_11 junction_pos=4 DEK=4aa_AFF2=11aa
+SEEEAVEKAKPRNNP
+>class_II_15mer_12 junction_pos=3 DEK=3aa_AFF2=12aa
+EEEAVEKAKPRNNPV
+>class_II_15mer_13 junction_pos=2 DEK=2aa_AFF2=13aa
+EEAVEKAKPRNNPVN
+>class_II_15mer_14 junction_pos=1 DEK=1aa_AFF2=14aa
+EAVEKAKPRNNPVNP

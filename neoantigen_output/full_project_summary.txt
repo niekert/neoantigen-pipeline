@@ -1,0 +1,228 @@
+DEK-AFF2 Fusion Neoantigen Discovery — Full Project Summary
+============================================================
+Date: 2026-03-22
+Patient: Niek
+Sample: COREDB010694T2 (Hartwig Medical Foundation)
+Diagnosis: Stage IV NSCLC with neuroendocrine differentiation
+
+============================================================
+BACKGROUND
+============================================================
+
+The tumor is driven by a DEK-AFF2 gene fusion (DEK exon 7 -> AFF2 exon 9,
+as reported by Hartwig/LINX). This fusion creates a chimeric protein that
+does not exist in normal human cells. The junction between DEK and AFF2
+produces novel peptide sequences that could be recognized by the immune
+system — making them ideal targets for a personalized mRNA cancer vaccine.
+
+This project computationally identifies candidate neoantigen peptides from
+this fusion and predicts which ones can bind to HLA molecules (the first
+step toward immune recognition).
+
+============================================================
+WHAT WE DID
+============================================================
+
+PHASE 1-2: Fusion Junction Reconstruction & Peptide Generation
+--------------------------------------------------------------
+Tool: Custom Python script using Ensembl REST API (neoantigen_pipeline.py)
+
+1. Fetched protein sequences for DEK (375 aa) and AFF2 (1311 aa) from
+   the Ensembl database using their canonical transcripts:
+   - DEK:  ENST00000652689 (RefSeq NM_003472.4)
+   - AFF2: ENST00000370460
+
+2. Resolved exon numbering discrepancy:
+   - Hartwig reports "DEK exon 7" counting ALL exons (including UTR)
+   - DEK has 11 total exons, 1 of which is a 5' UTR-only exon
+   - Hartwig's "exon 7" = coding exon 6 in Ensembl numbering
+   - This matters because coding exon 6 ends at a clean codon boundary
+     (phase 0), confirming the fusion is IN-FRAME
+   - Coding exon 7 would have been OUT-OF-FRAME (phase 1), producing
+     a premature stop codon after just 2 amino acids
+
+3. Confirmed the fusion is in-frame:
+   - DEK coding exon 6: phase_end = 0 (clean codon boundary)
+   - AFF2 coding exon 9: phase_start = 0 (clean codon boundary)
+   - No novel junction amino acid, no frameshift
+   - Fusion protein: 1112 amino acids (functional chimeric protein)
+
+4. Reconstructed the fusion junction:
+   DEK side:  ...ILSDESSSDEDEKKNKEESSDDEDKESEEE
+   AFF2 side: AVEKAKPRNNPVNPPLATPQPPPAVQASGG...
+   Junction:  ...ESEEE|AVEKA...
+              (DEK aa 254 | AFF2 aa 454)
+
+5. Generated 48 candidate peptides spanning the junction:
+   - 34 Class I peptides (8-11mers) for HLA-A, -B, -C presentation
+   - 14 Class II peptides (15mers) for HLA-DR, -DQ, -DP presentation
+   All peptides contain at least 1 amino acid from each side of the
+   junction, ensuring they are truly tumor-specific.
+
+
+PHASE 4: HLA Binding Prediction (pre-computed for all common alleles)
+---------------------------------------------------------------------
+Tool: MHCflurry 2.1.5 (Class1AffinityPredictor)
+
+Since the patient's HLA type is not yet known, we ran binding predictions
+against a panel of 54 common HLA Class I alleles covering >95% of the
+global population. This allows instant lookup once HLA typing arrives.
+
+Results: 2592 predictions (48 peptides x 54 alleles)
+- 2 elite binders   (IC50 < 50 nM, percentile < 0.5%)
+- 23 strong binders  (IC50 < 500 nM, percentile < 2%)
+- 138 weak binders   (IC50 < 5000 nM, percentile < 5%)
+
+============================================================
+TOP NEOANTIGEN CANDIDATES
+============================================================
+
+Ranked by number of HLA alleles showing strong binding:
+
+#1  EAVEKAKPR (9mer)
+    Junction position: 1 (1 aa from DEK, 8 from AFF2)
+    Binds 3 alleles, 2 elite
+    Best IC50: 30.6 nM (HLA-A*68:01) — ELITE
+    Also binds: HLA-A*33:01 (43.5 nM, ELITE), HLA-A*31:01 (350 nM)
+    NOTE: This is the strongest binder in the entire panel.
+
+#2  ESEEEAVEK (9mer)
+    Junction position: 5 (5 aa from DEK, 4 from AFF2)
+    Binds 4 alleles, 0 elite
+    Best IC50: 136.8 nM (HLA-A*68:01)
+    Also binds: HLA-C*02:02, HLA-C*03:03, HLA-C*06:02
+
+#3  SEEEAVEKA (9mer)
+    Junction position: 4 (4 aa from DEK, 5 from AFF2)
+    Binds 4 alleles, 0 elite
+    Best IC50: 65.3 nM (HLA-B*40:02)
+    Also binds: HLA-B*40:01, HLA-B*44:02, HLA-B*44:03
+
+#4  KESEEEAVEKA (11mer)
+    Junction position: 6 (6 aa from DEK, 5 from AFF2)
+    Binds 4 alleles, 0 elite
+    Best IC50: 70.7 nM (HLA-B*40:02)
+    Also binds: HLA-B*40:01, HLA-B*44:02, HLA-B*44:03
+
+#5  KESEEEAVEK (10mer)
+    Junction position: 6 (6 aa from DEK, 4 from AFF2)
+    Binds 3 alleles, 0 elite
+    Best IC50: 253.1 nM (HLA-B*27:05)
+    Also binds: HLA-B*40:02, HLA-C*03:03
+
+============================================================
+HOW TO READ THESE RESULTS
+============================================================
+
+IC50 (nM) — Binding affinity
+  The concentration of peptide needed to occupy 50% of HLA molecules.
+  Lower = stronger binding.
+  < 50 nM   = elite binder (very strong, high priority)
+  < 500 nM  = strong binder (good candidate)
+  < 5000 nM = weak binder (may still be relevant)
+  > 5000 nM = non-binder
+
+Percentile (%)
+  How this peptide ranks compared to random peptides for the same HLA.
+  Lower = better.
+  < 0.5%  = top 0.5% of all possible peptides (elite)
+  < 2.0%  = top 2% (strong)
+
+Junction position
+  Where the DEK|AFF2 split falls within the peptide.
+  Peptides with the junction near the middle are most novel (more residues
+  from both sides). Peptides with junction at position 1 have mostly AFF2
+  sequence but still include the novel junction context.
+
+Promiscuous binder
+  A peptide that binds strongly to many different HLA alleles. These are
+  the best vaccine candidates because they work regardless of HLA type.
+
+============================================================
+WHAT IS STILL NEEDED
+============================================================
+
+1. HLA TYPING (critical, blocking)
+   The patient's HLA-A, HLA-B, HLA-C alleles determine which of these
+   candidates will actually work. Without HLA typing, we have predictions
+   for all common alleles but can't narrow to the specific candidates.
+
+   Action: Request HLA Class I typing (HLA-A, -B, -C) and ideally
+   Class II (HLA-DRB1) from oncologist. Standard blood draw.
+
+   Once available, run:
+     python lookup_hla.py --alleles HLA-A*XX:XX,HLA-A*XX:XX,...
+
+2. HARTWIG LINX DATA (important, not blocking)
+   The exact genomic breakpoint coordinates would confirm the exon
+   numbering interpretation. Currently we infer that Hartwig's "exon 7"
+   = coding exon 6 based on frame analysis (only this interpretation
+   gives an in-frame fusion, consistent with Hartwig's report).
+
+   Action: Request access to Hartwig raw data files through oncologist
+   at NKI-AVL. Look for *.linx.fusion.tsv file.
+
+3. CLASS II PREDICTIONS (not blocking)
+   The 14 class II peptides (15mers) have not been tested for HLA-DR/DQ
+   binding. MHCflurry only handles Class I.
+
+   Action: Submit 15mers to NetMHCIIpan 4.3 web server:
+   https://services.healthtech.dtu.dk/services/NetMHCIIpan-4.3/
+
+4. POINT MUTATION NEOANTIGENS (secondary priority)
+   NF1 R2183Q and ATR D626N could also produce neoantigens, though these
+   are lower priority than the fusion (subclonal, lower VAF).
+
+5. IMMUNOGENICITY PREDICTION (stretch goal)
+   Not all peptides that bind HLA will trigger a T-cell response. Tools
+   like IEDB immunogenicity predictor or DeepImmuno can estimate this.
+
+============================================================
+OUTPUT FILES
+============================================================
+
+neoantigen_output/
+  junction_peptides.fasta       — All 48 candidate peptides (FASTA)
+  netmhcpan_input.txt           — Peptide list for web server submission
+  wildtype_peptides.fasta       — Normal counterparts for comparison
+  protein_sequences.fasta       — Full DEK, AFF2, and fusion protein
+  analysis_report.txt           — Phase 1-2 summary
+  binding_results_all_alleles.csv — All 2592 binding predictions
+  strong_binders_summary.csv    — 25 strong/elite binder hits
+  promiscuous_binders.csv       — Peptides ranked by # alleles bound
+  binding_report.txt            — Phase 4 binding prediction summary
+  full_project_summary.txt      — This file
+
+Scripts:
+  neoantigen_pipeline.py        — Phase 1-2: fusion reconstruction + peptides
+  binding_prediction.py         — Phase 4: HLA binding prediction
+  lookup_hla.py                 — Filter results to your HLA alleles
+
+============================================================
+IMPORTANT CAVEATS
+============================================================
+
+- These are computational predictions, not experimental results.
+  Binding prediction accuracy is ~80-90% for strong binders.
+- Binding to HLA is necessary but not sufficient for immune recognition.
+  The peptide must also be processed, presented, and recognized by T cells.
+- The exon numbering interpretation (Hartwig exon 7 = coding exon 6) is
+  based on frame analysis and is highly likely correct, but can only be
+  100% confirmed with the LINX breakpoint coordinates.
+- This is a personal research project, not a clinical recommendation.
+  All findings should be discussed with the treating oncologist.
+
+============================================================
+REFERENCES
+============================================================
+
+Tools used:
+- Ensembl REST API (GRCh38/hg38) — https://rest.ensembl.org
+- MHCflurry 2.1.5 — https://github.com/openvax/mhcflurry
+- NetMHCpan 4.1 (pending) — https://services.healthtech.dtu.dk
+
+Key literature:
+- MHCflurry 2.0: O'Donnell et al., Cell Systems 2020
+- NetMHCpan 4.1: Reynisson et al., Nucleic Acids Res 2020
+- Neoantigen prediction best practices: Wells et al., Genome Medicine 2020
+- DEK-AFF2 fusion biology: Kuo et al., Mod Pathol 2021

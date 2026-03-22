@@ -1,0 +1,21 @@
+# Virtual environments
+venv/
+venv312/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+
+# Claude Code
+.claude/
+
+# IDE
+.vscode/
+.idea/
+
+# HLA results (personal/sensitive — don't commit until ready)
+neoantigen_output/my_hla_results.csv

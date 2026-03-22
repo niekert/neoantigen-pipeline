@@ -1,0 +1,27 @@
+DEK-AFF2 Fusion Neoantigen Analysis Report
+==================================================
+
+Fusion: DEK exon 6 :: AFF2 exon 9
+DEK protein: 375 aa (breakpoint at aa 254)
+AFF2 protein: 1311 aa (fusion starts at aa 454)
+Fusion protein: 1112 aa
+
+Junction region:
+  DEK side:  ...ILSDESSSDEDEKKNKEESSDDEDKESEEE
+  AFF2 side: AVEKAKPRNNPVNPPLATPQPPPAVQASGG...
+
+Peptides generated:
+  Class I (8-11mers): 34
+  Class II (15mers):  14
+
+Next steps:
+1. Get HLA typed (blood test or from WGS germline BAM)
+2. Submit junction_peptides.fasta to NetMHCpan 4.1:
+   https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/
+3. Submit class II peptides to NetMHCIIpan 4.3:
+   https://services.healthtech.dtu.dk/services/NetMHCIIpan-4.3/
+4. Compare mutant vs wild-type binding (wildtype_peptides.fasta)
+5. Select peptides with:
+   - %Rank < 0.5 (strong binders) or < 2.0 (weak binders)
+   - IC50 < 500 nM (preferably < 50 nM)
+   - Better binding than wild-type counterpart
