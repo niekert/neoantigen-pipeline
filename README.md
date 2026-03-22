@@ -13,7 +13,7 @@ Computational pipeline to identify candidate neoantigen peptides from a DEK-AFF2
 
 1. **Reconstructs the fusion junction** — fetches DEK and AFF2 protein sequences from Ensembl, maps exon boundaries, and determines the exact amino acid sequence at the fusion point
 2. **Generates candidate peptides** — creates all 8-15mer peptides that span the junction (48 candidates)
-3. **Predicts HLA binding** — runs MHCflurry against 54 common HLA Class I alleles to identify which peptides could be presented to the immune system
+3. **Predicts HLA binding** — runs [MHCflurry](https://github.com/openvax/mhcflurry) against 54 common HLA Class I alleles to identify which peptides could be presented to the immune system
 4. **Provides instant HLA lookup** — once HLA typing is available, results are filtered to the patient's specific alleles in seconds
 
 ## Key Results
@@ -33,12 +33,16 @@ Computational pipeline to identify candidate neoantigen peptides from a DEK-AFF2
 
 ## What Is Needed Next
 
-**HLA Class I typing (HLA-A, -B, -C)** — required to determine which of these candidates match the patient's immune system. Once available:
+1. **HLA Class I typing (HLA-A, -B, -C)** — required to determine which of these candidates match the patient's immune system. Standard blood draw. Once available:
 
 ```bash
 source venv312/bin/activate
 python lookup_hla.py --alleles HLA-A*XX:XX,HLA-A*XX:XX,HLA-B*XX:XX,HLA-B*XX:XX,HLA-C*XX:XX,HLA-C*XX:XX
 ```
+
+2. **HLA Class II binding predictions** — 14 additional junction peptides (15mers) have been generated but not yet tested. Class II presentation (HLA-DR, -DQ, -DP) activates CD4+ helper T cells, which support and sustain the CD8+ killer T cell response. This is an important complementary analysis. Requires [NetMHCIIpan 4.3](https://services.healthtech.dtu.dk/services/NetMHCIIpan-4.3/) (web server or local install).
+
+3. **Hartwig LINX breakpoint coordinates** — to definitively confirm the exon numbering interpretation (see Technical Notes).
 
 ## Output Files
 
